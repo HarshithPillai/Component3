@@ -62,11 +62,6 @@
 	<!-- logger config -->
 	<root level="${log.level}">
 		<appender-ref ref="ASYNC_CONSOLE" />
-		<if condition='${kafka.log}'>
-			<then>
-				<appender-ref ref="ASYNC_KAFKA" />
-			</then>
-		</if>
 	</root>
 
 </configuration>
