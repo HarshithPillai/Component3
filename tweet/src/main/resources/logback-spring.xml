@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+
+	<timestamp key="BY_SECOND" datePattern="yyyyMMdd'T'HHmmss" />
+
+	<property resource="logback.properties" />
+
+	<appender name="ConsoleAppender"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>${log.custom.field.app.name}</customFields>
+			<fieldNames>
+				<timestamp>timestamp</timestamp>
+				<version>[ignore]</version>
+				<levelValue>[ignore]</levelValue>
+				<logger>logger</logger>
+				<thread>thread</thread>
+			</fieldNames>
+		</encoder>
+	</appender>
+
+	<appender name="FileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+		<!-- ACTIVE OUTPUT TARGET -->
+		<file>${baseDir}/${app.name}-${app.version}.log</file>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- ARCHIVED LOG FILES -->
+			<fileNamePattern>
+				${baseDir}/${app.name}-${app.version}%d{yyyy-MM-dd}%i.log
+			</fileNamePattern>
+
+			<maxFileSize>200KB</maxFileSize>
+			<maxHistory>1</maxHistory>
+			<totalSizeCap>1MB</totalSizeCap>
+		</rollingPolicy>
+
+		<append>true</append>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>${log.custom.field.app.name}</customFields>
+			<fieldNames>
+				<timestamp>timestamp</timestamp>
+				<version>[ignore]</version>
+				<levelValue>[ignore]</levelValue>
+				<logger>logger</logger>
+				<thread>thread</thread>
+			</fieldNames>
+		</encoder>
+	</appender>
+
+	<appender name="FILE_APPENDER_ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<OnMatch>ACCEPT</OnMatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<OnMatch>ACCEPT</OnMatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<OnMatch>DENY</OnMatch>
+		</filter>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<OnMatch>DENY</OnMatch>
+		</filter>
+
+
+		<!-- ACTIVE OUTPUT TARGET -->
+		<file>${baseDir}/${app.name}-${app.version}.ERROR.log</file>
+
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- ARCHIVED LOG FILES -->
+			<fileNamePattern>
+				${baseDir}/${app.name}-${app.version}%d{yyyy-MM-dd}%i.ERROR.log
+			</fileNamePattern>
+
+			<maxFileSize>200KB</maxFileSize>
+			<maxHistory>1</maxHistory>
+			<totalSizeCap>1MB</totalSizeCap>
+		</rollingPolicy>
+
+		<append>true</append>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>${log.custom.field.app.name}</customFields>
+			<fieldNames>
+				<timestamp>timestamp</timestamp>
+				<version>[ignore]</version>
+				<levelValue>[ignore]</levelValue>
+				<logger>logger</logger>
+				<thread>thread</thread>
+			</fieldNames>
+		</encoder>
+	</appender>
+
+	<appender name="KafkaAppender"
+		class="com.github.danielwegener.logback.kafka.KafkaAppender">
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>${log.custom.field.app.name}</customFields>
+			<fieldNames>
+				<timestamp>timestamp</timestamp>
+				<version>[ignore]</version>
+				<levelValue>[ignore]</levelValue>
+				<logger>logger</logger>
+				<thread>thread</thread>
+			</fieldNames>
+		</encoder>
+
+		<!-- Configure topics -->
+		<topic>${log.kafka.topic}</topic>
+
+		<keyingStrategy
+			class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+		<deliveryStrategy
+			class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+
+		<!-- Kafka producer configuration starts -->
+		<producerConfig>bootstrap.servers=${log.kafka.bootstrap.servers}
+		</producerConfig>
+		<producerConfig>linger.ms=1000</producerConfig>
+		<!-- even if the producer buffer runs full, do not block the application 
+			but start to drop messages -->
+		<producerConfig>max.block.ms=0</producerConfig>
+		<!-- Kafka producer configuration ends -->
+
+		<appender-ref ref="FileAppender" />
+	</appender>
+
+	<!-- WRAPPING ALL APPENDERS INSIDE ASYNC-APPENDER -->
+	<!-- THIS MAKES LOGGING FASTER -->
+	<appender name="ROLLING_FILE_ASYNC"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="FileAppender" />
+	</appender>
+	<appender name="KAFKA_ASYNC"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="KafkaAppender" />
+	</appender>
+	<appender name="CONSOLE_ASYNC"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="ConsoleAppender" />
+	</appender>
+	<appender level="ERROR" name="FILE_APPENDER_ERROR_ASYNC"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="FILE_APPENDER_ERROR" />
+	</appender>
+	<!-- END -->
+
+	<!-- Add all appenders -->
+	<root level="${log.level}">
+		<appender-ref ref="ROLLING_FILE_ASYNC" />
+		<appender-ref ref="KAFKA_ASYNC" />
+		<appender-ref ref="CONSOLE_ASYNC" />
+		<appender-ref ref="FILE_APPENDER_ERROR_ASYNC" />
+	</root>
+
+</configuration>
