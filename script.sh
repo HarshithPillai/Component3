@@ -39,7 +39,7 @@ cd ./runtime
 
 
 export BASE_LOG_DIRECTORY=/home/ec2-user/logs/
-export DATABASE_URI=mongodb://documentDB:documentDB@docdb-2022-03-25-18-10-17.cluster-cqgt35jhle7c.us-east-2.docdb.amazonaws.com:27017/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false
+export DATABASE_URI=mongodb://localhost:27017/tweetdb
 
 # java -jar ./app1.jar &
 # java -jar ./app2.jar &
