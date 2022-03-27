@@ -41,8 +41,8 @@ cd ./runtime
 export BASE_LOG_DIRECTORY=/home/ec2-user/logs/
 export DATABASE_URI=mongodb://localhost:27017/tweetdb
 
-# java -jar ./app1.jar &
-# java -jar ./app2.jar &
-# java -jar ./app3.jar &
+java -jar ./app1.jar &
+java -jar ./app2.jar &
+java -jar ./app3.jar &
 
-java -jar ./app1.jar
+# java -jar ./app1.jar
