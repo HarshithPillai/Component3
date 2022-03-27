@@ -61,7 +61,7 @@
 
 	<!-- logger config -->
 	<root level="${log.level}">
-		<appender-ref ref="ASYNC_CONSOLE" />
+		<appender-ref ref="ASYNC_FILE" />
 	</root>
 
 </configuration>
