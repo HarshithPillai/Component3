@@ -7,6 +7,7 @@ echo `git pull`
 cd userprofile
 echo "##### current working directory "`pwd`
 echo "#### Running mvn build--"
+echo `chmod u+x ./mvnw`
 echo `./mvnw clean install -DskipTests`
 cp ./target/User-Profile-MS.jar /home/ec2-user/runtime/app1.jar
 
@@ -15,6 +16,7 @@ cd ..
 cd authentication-service
 echo "##### current working directory "`pwd`
 echo "#### Running mvn build--"
+echo `chmod u+x ./mvnw`
 echo `./mvnw clean install -DskipTests`
 cp ./target/Auth-MS.jar /home/ec2-user/runtime/app2.jar
 
@@ -23,6 +25,7 @@ cd ..
 cd tweet
 echo "##### current working directory "`pwd`
 echo "#### Running mvn build--"
+echo `chmod u+x ./mvnw`
 echo `./mvnw clean install -DskipTests`
 cp ./target/Tweet-MS.jar /home/ec2-user/runtime/app3.jar
 
